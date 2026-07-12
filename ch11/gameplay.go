@@ -8,8 +8,19 @@ import (
 	"math/rand"
 )
 
-// NewGame creates a fresh game session: engine, textures, infinite tilemap, and one random weapon.
+// NewGame creates the Game and builds its first session.
 func NewGame() *Game {
+	g := &Game{}
+	g.start()
+	return g
+}
+
+// start builds a fresh session on g: engine, textures, infinite tilemap, and one random
+// weapon. NewGame calls it once; restart calls it again after a game over, so a New Game
+// click begins from a clean state. Assigning to the existing g (rather than allocating a
+// new *Game) keeps the speed-multiplier pointer and the player callbacks valid across
+// restarts.
+func (g *Game) start() {
 	engine := NewEngine()
 	rm := engine.ResourceManager()
 	loadTextures(rm)
@@ -29,27 +40,27 @@ func NewGame() *Game {
 
 	wm := NewWeaponLoadout(engine, player)
 
-	game := &Game{
-		engine:  engine,
-		player:  player,
-		cursor:  cursor,
-		weapons: wm,
+	g.engine = engine
+	g.player = player
+	g.cursor = cursor
+	g.weapons = wm
 
-		enemyManager: en.NewEnemyManager(en.NewEnemySpawner(NewTimer(0, false))),
-		removalQueue: make([]*Collider, 0),
-		pickups:      pkup.NewPickupManager(),
+	g.enemyManager = en.NewEnemyManager(en.NewEnemySpawner(NewTimer(0, false)))
+	g.removalQueue = make([]*Collider, 0)
+	g.pickups = pkup.NewPickupManager()
 
-		playerSpeedMult: 1.0,
-		xpBonusMult:     1.0,
+	g.playerSpeedMult = 1.0
+	g.xpBonusMult = 1.0
 
-		gameOver:      false,
-		elapsedFrames: 0,
+	g.gameOver = false
+	g.elapsedFrames = 0
+	g.upgradeCount = 0
 
-		hud: NewHUD(engine.ResourceManager()),
-	}
+	g.hud = NewHUD(engine.ResourceManager())
+	g.gameOverOverlay = NewGameOverOverlay()
 
 	// Wire speed multiplier pointer after game struct is stable.
-	player.SetSpeedMult(&game.playerSpeedMult)
+	player.SetSpeedMult(&g.playerSpeedMult)
 
 	// Mount one random starting weapon (the others are unlocked via upgrades).
 	switch rand.Intn(4) {
@@ -69,6 +80,11 @@ func NewGame() *Game {
 		wm.Mount(wm.HolyShield, player.WeaponsRoot)
 	}
 
-	wirePlayerCallbacks(player, game)
-	return game
+	wirePlayerCallbacks(player, g)
+}
+
+// restart begins a fresh run in place. Ebitengine keeps calling Update and Draw on the
+// same *Game pointer, so rebuilding g's fields is all it takes to start over.
+func (g *Game) restart() {
+	g.start()
 }

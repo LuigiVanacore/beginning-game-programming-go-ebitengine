@@ -8,6 +8,7 @@ import (
 	. "book/code/ch11/ui"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
 // Game holds all session state: infrastructure, entities, weapons, upgrades, and HUD.
@@ -33,7 +34,8 @@ type Game struct {
 	elapsedFrames int // survival time, counted up once per Update
 
 	// --- UI ---
-	hud *HUD
+	hud             *HUD
+	gameOverOverlay *GameResultOverlay
 
 	// upgradeCount caps all upgrade picks (weapons + bonus items)
 	upgradeCount int
@@ -42,6 +44,12 @@ type Game struct {
 // Update runs one game frame.
 func (g *Game) Update() error {
 	if g.gameOver {
+		if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+			mx, my := ebiten.CursorPosition()
+			if g.gameOverOverlay.NewGameButtonContains(float64(mx), float64(my)) {
+				g.restart()
+			}
+		}
 		return g.engine.Update()
 	}
 	if g.player.IsDead() {

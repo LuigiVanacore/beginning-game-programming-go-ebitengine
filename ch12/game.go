@@ -32,7 +32,8 @@ type Game struct {
 	elapsedFrames int // survival time, counted up once per Update
 
 	// --- UI ---
-	hud *HUD
+	hud             *HUD
+	gameOverOverlay *GameResultOverlay
 
 	// upgradeCount caps all upgrade picks (weapons + bonus items)
 	upgradeCount int

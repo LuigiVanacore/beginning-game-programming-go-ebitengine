@@ -32,7 +32,8 @@ type Game struct {
 	elapsedFrames int // survival time, counted up once per Update
 
 	// --- UI ---
-	hud *HUD
+	hud             *HUD
+	gameOverOverlay *GameResultOverlay
 
 	// --- VFX (new in ch13) ---
 	particles    *ParticleSystem

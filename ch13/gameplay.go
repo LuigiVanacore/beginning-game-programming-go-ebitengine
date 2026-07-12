@@ -8,8 +8,20 @@ import (
 	"math/rand"
 )
 
-// NewGame creates a fresh game session: engine, textures, infinite tilemap, and one random weapon.
+// NewGame creates the Game and builds its first session. The state machine calls it for
+// every new run — from the main menu and from the game-over screen — and hands the result
+// to App.SetGame.
 func NewGame() *Game {
+	g := &Game{}
+	g.start()
+	return g
+}
+
+// start builds a fresh session on g: engine, textures, infinite tilemap, one random
+// weapon, and the VFX systems. Starting a new run goes through NewGame; the state machine
+// swaps the session in on the game-over "New Game" click. Music is owned by the game
+// state's Enter/Exit, so start does not touch the track here.
+func (g *Game) start() {
 	engine := NewEngine()
 	rm := engine.ResourceManager()
 	loadTextures(rm)
@@ -29,30 +41,30 @@ func NewGame() *Game {
 
 	wm := NewWeaponLoadout(engine, player)
 
-	game := &Game{
-		engine:  engine,
-		player:  player,
-		cursor:  cursor,
-		weapons: wm,
+	g.engine = engine
+	g.player = player
+	g.cursor = cursor
+	g.weapons = wm
 
-		enemyManager: en.NewEnemyManager(en.NewEnemySpawner(NewTimer(0, false))),
-		removalQueue: make([]*Collider, 0),
-		pickups:      pkup.NewPickupManager(),
+	g.enemyManager = en.NewEnemyManager(en.NewEnemySpawner(NewTimer(0, false)))
+	g.removalQueue = make([]*Collider, 0)
+	g.pickups = pkup.NewPickupManager()
 
-		playerSpeedMult: 1.0,
-		xpBonusMult:     1.0,
+	g.playerSpeedMult = 1.0
+	g.xpBonusMult = 1.0
 
-		gameOver:      false,
-		elapsedFrames: 0,
+	g.gameOver = false
+	g.elapsedFrames = 0
+	g.upgradeCount = 0
 
-		hud: NewHUD(engine.ResourceManager()),
+	g.hud = NewHUD(engine.ResourceManager())
+	g.gameOverOverlay = NewGameOverOverlay()
 
-		particles:    NewParticleSystem(),
-		floatingText: NewFloatingTextSystem(),
-	}
+	g.particles = NewParticleSystem()
+	g.floatingText = NewFloatingTextSystem()
 
 	// Wire speed multiplier pointer after game struct is stable.
-	player.SetSpeedMult(&game.playerSpeedMult)
+	player.SetSpeedMult(&g.playerSpeedMult)
 
 	// Mount one random starting weapon (the others are unlocked via upgrades).
 	switch rand.Intn(4) {
@@ -72,9 +84,5 @@ func NewGame() *Game {
 		wm.Mount(wm.HolyShield, player.WeaponsRoot)
 	}
 
-	wirePlayerCallbacks(player, game)
-
-	// Music is owned by the game state's Enter/Exit, not by the session, so a new
-	// session does not start the track here.
-	return game
+	wirePlayerCallbacks(player, g)
 }

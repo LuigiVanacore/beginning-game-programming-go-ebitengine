@@ -2,7 +2,6 @@ package game
 
 import (
 	en "book/code/ch13/enemy"
-	. "book/code/ch13/ui"
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -37,8 +36,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	g.hud.Draw(screen, g.player.HP/g.player.MaxHP, xpPct, g.elapsedFrames)
 	if g.gameOver {
 		// Survival mode ends only when the player dies; the frozen HUD timer above
-		// keeps showing how long the player lasted.
-		NewGameOverOverlay().Draw(screen)
+		// keeps showing how long the player lasted. The overlay draws the New Game
+		// button; the game state handles the click (see state_game.go).
+		g.gameOverOverlay.Draw(screen)
 	}
 }
 

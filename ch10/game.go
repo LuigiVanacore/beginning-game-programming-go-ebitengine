@@ -5,6 +5,9 @@ import (
 	. "book/code/ch10/internal/core"
 	pkup "book/code/ch10/pickups"
 	. "book/code/ch10/ui"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
 // xpNeededForLevel returns XP required to reach the next level (exponential curve).
@@ -51,11 +54,23 @@ type Game struct {
 	elapsedFrames int // survival time, counted up once per Update
 
 	// --- UI ---
-	hud *HUD
+	hud             *HUD
+	gameOverOverlay *GameResultOverlay
 }
 
-// NewGame creates and wires the full game session.
+// NewGame creates the Game and builds its first session.
 func NewGame() *Game {
+	g := &Game{}
+	g.start()
+	return g
+}
+
+// start builds a fresh session on g: a new engine, world, player, weapons, enemies,
+// pickups, and HUD. NewGame calls it once; restart calls it again after a game over,
+// so a New Game click begins from a clean state. Because it assigns to the existing g
+// rather than allocating a new *Game, the callbacks wired below keep pointing at the
+// same Game that Ebitengine drives.
+func (g *Game) start() {
 	engine := NewEngine()
 	rm := engine.ResourceManager()
 	loadTextures(rm)
@@ -66,33 +81,42 @@ func NewGame() *Game {
 
 	player, cursor := createSession(engine, rm, world)
 
-	game := &Game{
-		engine:  engine,
-		world:   world,
-		player:  player,
-		cursor:  cursor,
-		rm:      rm,
-		weapons: NewWeaponManager(),
+	g.engine = engine
+	g.world = world
+	g.player = player
+	g.cursor = cursor
+	g.rm = rm
+	g.weapons = NewWeaponManager()
 
-		enemyManager: en.NewEnemyManager(en.NewEnemySpawner(NewTimer(0, false), nil)),
-		removalQueue: make([]*Collider, 0),
-		pickups:      pkup.NewPickupManager(),
+	g.enemyManager = en.NewEnemyManager(en.NewEnemySpawner(NewTimer(0, false), nil))
+	g.removalQueue = make([]*Collider, 0)
+	g.pickups = pkup.NewPickupManager()
 
-		gameOver:      false,
-		elapsedFrames: 0,
+	g.gameOver = false
+	g.elapsedFrames = 0
 
-		hud: NewHUD(rm),
-	}
+	g.hud = NewHUD(rm)
+	g.gameOverOverlay = NewGameOverOverlay()
 
-	attachPlayerWeapons(engine, rm, player, game)
+	attachPlayerWeapons(engine, rm, player, g)
+	wirePlayerCallbacks(player, g)
+}
 
-	wirePlayerCallbacks(player, game)
-	return game
+// restart begins a fresh run in place. Ebitengine keeps calling Update and Draw on the
+// same *Game pointer, so rebuilding g's fields is all it takes to start over.
+func (g *Game) restart() {
+	g.start()
 }
 
 // Update runs one game frame.
 func (g *Game) Update() error {
 	if g.gameOver {
+		if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+			mx, my := ebiten.CursorPosition()
+			if g.gameOverOverlay.NewGameButtonContains(float64(mx), float64(my)) {
+				g.restart()
+			}
+		}
 		return g.engine.Update()
 	}
 	if g.player.IsDead() {
