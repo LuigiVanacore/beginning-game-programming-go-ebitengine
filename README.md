@@ -1,178 +1,176 @@
-# Beginning Game Programming with Go and Ebitengine — Codice sorgente
+# Beginning Game Programming with Go and Ebitengine — Source Code
 
-Questo repository contiene il codice sorgente completo del libro **_Beginning Game
-Programming with Go and Ebitengine_**.
+This repository contains the complete source code for the book
+**_Beginning Game Programming with Go and Ebitengine_**.
 
-Il libro insegna, passo dopo passo, come programmare un videogioco 2D in stile
-**"bullet-heaven"** (il genere reso popolare da *Vampire Survivors*) usando il
-linguaggio **Go** e il framework **[Ebitengine](https://ebitengine.org/)**.
+The book teaches, step by step, how to program a 2D **"bullet-heaven"** game (the
+genre popularized by *Vampire Survivors*) using the **Go** language and the
+**[Ebitengine](https://ebitengine.org/)** framework.
 
-Il gioco che si costruisce lungo i capitoli si chiama **Gopher Survivor**: il
-giocatore controlla un Gopher che si muove su una mappa infinita, viene assalito
-da ondate di nemici sempre più numerose, spara e attiva armi in automatico,
-raccoglie esperienza, sale di livello e sceglie potenziamenti, fino allo scontro
-finale con il boss.
-
----
-
-## A chi è rivolto
-
-- Sviluppatori che conoscono le basi di Go e vogliono imparare il game programming.
-- Chi vuole capire come si costruisce **da zero** un piccolo motore 2D
-  (scene graph, gestione risorse, input, collisioni, camera, UI, audio, stati di gioco).
-- Chi è curioso del genere "bullet-heaven" e vuole vederne l'implementazione reale.
-
-Non serve alcuna esperienza pregressa con Ebitengine.
+The game you build throughout the chapters is called **Gopher Survivor**: you
+control a Gopher moving across an infinite map, get swarmed by ever-growing waves
+of enemies, fire and trigger weapons automatically, collect experience, level up
+and pick upgrades, all the way to the final boss encounter.
 
 ---
 
-## Requisiti
+## Who this is for
 
-| Strumento | Versione |
-|-----------|----------|
-| **Go** | 1.22.0 o superiore |
+- Developers who know the basics of Go and want to learn game programming.
+- Anyone who wants to understand how to build a small 2D engine **from scratch**
+  (scene graph, resource management, input, collisions, camera, UI, audio, game states).
+- Anyone curious about the "bullet-heaven" genre who wants to see a real implementation.
+
+No prior experience with Ebitengine is required.
+
+---
+
+## Requirements
+
+| Tool | Version |
+|------|---------|
+| **Go** | 1.22.0 or later |
 | **Ebitengine** | v2.8.6 |
 
-Dipendenze principali (gestite via Go Modules, vedi i vari `go.mod`):
+Main dependencies (managed via Go Modules, see the individual `go.mod` files):
 
-- `github.com/hajimehoshi/ebiten/v2` — il framework di gioco
-- `golang.org/x/image` — font e utility grafiche (dai capitoli con UI/testo in poi)
+- `github.com/hajimehoshi/ebiten/v2` — the game framework
+- `golang.org/x/image` — fonts and graphics utilities (from the chapters with UI/text onward)
 
-> **Nota per Linux:** Ebitengine richiede alcune librerie di sistema (OpenGL, ALSA,
-> X11/Wayland). Consulta la [pagina di installazione ufficiale](https://ebitengine.org/en/documents/install.html)
-> se la compilazione fallisce per dipendenze native mancanti.
+> **Note for Linux:** Ebitengine requires some system libraries (OpenGL, ALSA,
+> X11/Wayland). See the [official installation page](https://ebitengine.org/en/documents/install.html)
+> if the build fails because of missing native dependencies.
 
 ---
 
-## Struttura del repository
+## Repository structure
 
-Ogni capitolo del libro è una **cartella autonoma e autoconsistente** (`ch01` … `ch13`),
-con il proprio `go.mod`. Questo permette di compilare ed eseguire ogni capitolo in
-modo indipendente e di confrontare facilmente lo stato del codice tra un passo e
-il successivo.
+Each chapter of the book is a **self-contained, standalone folder** (`ch01` … `ch13`),
+with its own `go.mod`. This lets you build and run each chapter independently and
+easily compare the state of the code from one step to the next.
 
 ```
 go_game_dev_book_code/
-├── ch01/               # un capitolo = un modulo Go a sé stante
-│   ├── go.mod          #   modulo "book/code/ch01"
+├── ch01/               # one chapter = one standalone Go module
+│   ├── go.mod          #   module "book/code/ch01"
 │   ├── cmd/main.go     #   entry point (func main)
-│   ├── assets/         #   sprite, tileset, audio, font (embedded via go:embed)
-│   ├── internal/core/  #   il "mini-motore" costruito nel libro
-│   └── *.go            #   codice specifico del capitolo (player, nemici, armi, ...)
+│   ├── assets/         #   sprites, tilesets, audio, fonts (embedded via go:embed)
+│   ├── internal/core/  #   the "mini-engine" built throughout the book
+│   └── *.go            #   chapter-specific code (player, enemies, weapons, ...)
 ├── ch02/
 ├── ...
 └── ch13/
 ```
 
-### Convenzioni ricorrenti
+### Recurring conventions
 
-Dai primi capitoli in poi si consolida una struttura comune, riusata e ampliata
-capitolo per capitolo:
+From the early chapters onward, a common structure takes shape and is reused and
+expanded chapter by chapter:
 
-- **`cmd/main.go`** — punto di ingresso; costruisce l'app/gioco e chiama `ebiten.RunGame`.
-- **`run.go` / `app.go`** — configurazione della finestra e avvio del game loop.
-- **`internal/core/`** — il motore riutilizzabile: scene graph, nodi, trasformazioni,
-  gestione risorse, input, collisioni, camera, tilemap, timer, audio, macchina a stati.
-- **`assets/`** — risorse incorporate nel binario tramite `//go:embed` (nessun file
-  esterno da distribuire con l'eseguibile).
-- **`enemy/`, `pickups/`, `ui/`** — pacchetti che raggruppano le entità di gioco man
-  mano che vengono introdotte.
+- **`cmd/main.go`** — entry point; builds the app/game and calls `ebiten.RunGame`.
+- **`run.go` / `app.go`** — window configuration and game-loop startup.
+- **`internal/core/`** — the reusable engine: scene graph, nodes, transforms,
+  resource management, input, collisions, camera, tilemap, timers, audio, state machine.
+- **`assets/`** — resources embedded into the binary via `//go:embed` (no external
+  files to ship alongside the executable).
+- **`enemy/`, `pickups/`, `ui/`** — packages that group the game entities as they
+  are introduced.
 
-Il cuore dell'architettura è un **motore basato su scene graph** (ispirato ai game
-engine "a nodi"): un `Engine` possiede un `World`; il `World` contiene un albero di
-`Node`/`Node2D` che vengono aggiornati e disegnati ad ogni frame, secondo il classico
-ciclo `Update` → `Draw` → `Layout` di Ebitengine.
-
----
-
-## I capitoli
-
-Ogni capitolo aggiunge un tassello sopra il precedente. Di seguito il percorso
-completo, con il titolo mostrato nella finestra di gioco:
-
-| Cap. | Titolo | Cosa si impara |
-|------|--------|----------------|
-| **01** | Hello Ebiten - Go Gopher | Primo programma Ebitengine: finestra, game loop, disegno di uno sprite (il Gopher). |
-| **02** | Scene Graph Framework | Fondamenta del motore: `Engine`, `World`, `Node`/`Node2D`, trasformazioni, vettori 2D, scene graph. |
-| **03** | Resource Manager, Layers, Sprites | Gestione centralizzata delle risorse, ordinamento in layer, sprite. |
-| **04** | Input and Player Movement | Sistema di input (action map), movimento del giocatore. |
-| **05** | Tileset, Tilemap, Camera | Tileset, tilemap infinita e una camera che segue il giocatore. |
-| **06** | Enemy and Collisions | Introduzione dei nemici e sistema di collisioni (collider, maschere, manager). |
-| **07** | Weapons and Projectiles | Armi automatiche, proiettili e **object pooling** per riutilizzare le entità. |
-| **08** | UI, Health, XP, Level Up | Interfaccia: barra della salute, barra XP, HUD, popup, schermata di *game over*, salita di livello. |
-| **09** | Potions, Sacred Book, Holy Shield | Nuovi pickup (pozioni) e armi orbitanti/ad area (Sacred Book, Holy Shield). |
-| **10** | Weapon Upgrade UI | Nuove armi (Flying Axe) e schermata di scelta dei potenziamenti. |
-| **11** | Gopher Survivor | Consolidamento del gameplay: sistema di upgrade (bonus, armi), utility, loop di gioco completo. |
-| **12** | Gopher Survivor — State machine | **Macchina a stati** dell'applicazione (menu, opzioni, gioco, pausa), audio, difficoltà e tipi di nemici. |
-| **13** | Gopher Survivor (finale) | Rifiniture finali: particellari, testo fluttuante (danni), tutte le funzionalità integrate. |
-
-> Il capitolo **13** rappresenta la versione finale e completa del gioco.
+The core of the architecture is a **scene-graph-based engine** (inspired by
+node-based game engines): an `Engine` owns a `World`; the `World` holds a tree of
+`Node`/`Node2D` objects that are updated and drawn every frame, following
+Ebitengine's classic `Update` → `Draw` → `Layout` cycle.
 
 ---
 
-## Come compilare ed eseguire
+## The chapters
 
-Ogni capitolo si esegue in modo indipendente. Dalla cartella del capitolo desiderato:
+Each chapter builds one more piece on top of the previous one. Below is the full
+path, with the title shown in the game window:
+
+| Ch. | Title | What you learn |
+|-----|-------|----------------|
+| **01** | Hello Ebiten - Go Gopher | Your first Ebitengine program: window, game loop, drawing a sprite (the Gopher). |
+| **02** | Scene Graph Framework | Engine foundations: `Engine`, `World`, `Node`/`Node2D`, transforms, 2D vectors, scene graph. |
+| **03** | Resource Manager, Layers, Sprites | Centralized resource management, layer ordering, sprites. |
+| **04** | Input and Player Movement | Input system (action map), player movement. |
+| **05** | Tileset, Tilemap, Camera | Tileset, infinite tilemap and a camera that follows the player. |
+| **06** | Enemy and Collisions | Introducing enemies and the collision system (colliders, masks, manager). |
+| **07** | Weapons and Projectiles | Automatic weapons, projectiles and **object pooling** to reuse entities. |
+| **08** | UI, Health, XP, Level Up | Interface: health bar, XP bar, HUD, popups, *game over* screen, leveling up. |
+| **09** | Potions, Sacred Book, Holy Shield | New pickups (potions) and orbiting/area weapons (Sacred Book, Holy Shield). |
+| **10** | Weapon Upgrade UI | New weapons (Flying Axe) and the upgrade-selection screen. |
+| **11** | Gopher Survivor | Gameplay consolidation: upgrade system (bonuses, weapons), utilities, complete game loop. |
+| **12** | Gopher Survivor — State machine | Application **state machine** (menu, options, game, pause), audio, difficulty and enemy types. |
+| **13** | Gopher Survivor (final) | Final polish: particles, floating (damage) text, all features integrated. |
+
+> Chapter **13** is the final, complete version of the game.
+
+---
+
+## Building and running
+
+Each chapter runs independently. From the folder of the chapter you want:
 
 ```bash
-# esempio: eseguire il capitolo 1
+# example: run chapter 1
 cd ch01
 go run ./cmd
 
-# esempio: eseguire il gioco completo (capitolo finale)
+# example: run the complete game (final chapter)
 cd ch13
 go run ./cmd
 ```
 
-Per produrre un eseguibile:
+To produce an executable:
 
 ```bash
 cd ch13
 go build -o gopher-survivor ./cmd
 ```
 
-Poiché gli asset sono **incorporati** nel binario tramite `//go:embed`, l'eseguibile
-risultante è autonomo e può essere distribuito senza cartelle di risorse aggiuntive.
+Because the assets are **embedded** into the binary via `//go:embed`, the resulting
+executable is self-contained and can be distributed without any extra resource folders.
 
-### Comandi di gioco (capitolo finale)
+### Controls (final chapter)
 
-- **Movimento:** WASD / frecce direzionali
-- Le armi si attivano **automaticamente**; l'obiettivo è sopravvivere il più a lungo
-  possibile e potenziare il proprio Gopher salendo di livello.
-
----
-
-## Come studiare il codice con il libro
-
-1. Leggi il capitolo del libro.
-2. Apri la cartella `chNN` corrispondente ed eseguila.
-3. Confronta il codice con quello del capitolo precedente per vedere esattamente
-   **cosa è cambiato** (l'organizzazione a moduli separati rende il diff immediato).
-
-Questo approccio "una cartella per capitolo" è pensato apposta come materiale
-didattico: puoi tornare a qualunque tappa del percorso senza dover ripristinare
-manualmente lo stato del progetto.
+- **Movement:** WASD / arrow keys
+- Weapons fire **automatically**; the goal is to survive as long as possible and
+  power up your Gopher by leveling up.
 
 ---
 
-## Licenza
+## How to study the code with the book
 
-Il codice sorgente di questo repository è distribuito sotto **Licenza MIT** — vedi
-il file [LICENSE](LICENSE).
+1. Read the book chapter.
+2. Open the matching `chNN` folder and run it.
+3. Compare the code with the previous chapter to see exactly **what changed** (the
+   one-module-per-chapter layout makes the diff immediate).
 
-Il **testo del libro** _Beginning Game Programming with Go and Ebitengine_ e le sue
-illustrazioni **non** sono coperti dalla licenza MIT e restano protetti dai rispettivi
-diritti d'autore.
-
-Gli asset di terze parti (ad es. l'immagine del Go Gopher, font, eventuali risorse
-audio/grafiche) restano soggetti alle rispettive licenze originali. Il logo/mascotte
-**Go Gopher** è stato creato da Renée French ed è distribuito sotto licenza
-[Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/).
+This "one folder per chapter" approach is designed specifically as teaching
+material: you can go back to any point in the journey without having to manually
+restore the project state.
 
 ---
 
-## Crediti
+## License
 
-- **Autore:** Luigi Vanacore
-- **Framework:** [Ebitengine](https://ebitengine.org/) di Hajime Hoshi
-- **Linguaggio:** [Go](https://go.dev/)
+The source code in this repository is released under the **MIT License** — see the
+[LICENSE](LICENSE) file.
+
+The **text** of the book _Beginning Game Programming with Go and Ebitengine_ and its
+illustrations are **not** covered by the MIT License and remain protected by their
+respective copyrights.
+
+Third-party assets (e.g. the Go Gopher image, fonts, any audio/graphic resources)
+remain subject to their own original licenses. The **Go Gopher** logo/mascot was
+created by Renée French and is distributed under the
+[Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/) license.
+
+---
+
+## Credits
+
+- **Author:** Luigi Vanacore
+- **Framework:** [Ebitengine](https://ebitengine.org/) by Hajime Hoshi
+- **Language:** [Go](https://go.dev/)
