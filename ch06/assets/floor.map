@@ -1,0 +1,13 @@
+# floor.map - 10x10 tile index grid
+# 0 = floor_1 (base), 1 = floor_2 (accent), 2 = floor_3 (accent)
+# tile 1 and tile 2 appear once each, away from the edge
+0 0 0 0 0 0 0 0 0 0
+0 0 0 1 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 2 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
