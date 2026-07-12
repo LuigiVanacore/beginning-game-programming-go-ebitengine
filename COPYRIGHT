@@ -1,0 +1,47 @@
+COPYRIGHT NOTICE
+================
+
+Beginning Game Programming with Go and Ebitengine — Source Code
+Copyright (c) 2026 Luigi Vanacore. All rights reserved.
+
+This repository contains the companion source code for the book
+"Beginning Game Programming with Go and Ebitengine".
+
+
+1. SOURCE CODE
+--------------
+All source code in this repository (the *.go files and build files) is
+licensed under the MIT License. See the accompanying LICENSE file for the
+full terms. You are free to use, modify and distribute the code, including
+for commercial purposes, provided the MIT copyright and permission notice
+is retained.
+
+
+2. THE BOOK
+-----------
+The text, figures, diagrams and other editorial content of the book
+"Beginning Game Programming with Go and Ebitengine" are NOT covered by the
+MIT License. They remain the exclusive intellectual property of the author
+and may not be reproduced or redistributed without prior written permission.
+
+
+3. THIRD-PARTY ASSETS AND DEPENDENCIES
+--------------------------------------
+This project uses third-party software and assets that remain subject to
+their own respective licenses, including but not limited to:
+
+  - Ebitengine (github.com/hajimehoshi/ebiten/v2)
+    Copyright (c) Hajime Hoshi — Apache License 2.0
+
+  - The Go standard library and golang.org/x packages
+    Copyright (c) The Go Authors — BSD-style license
+
+  - The "Go Gopher" mascot / artwork
+    Created by Renée French — Creative Commons Attribution 4.0 (CC BY 4.0)
+
+Any additional sprites, tilesets, fonts or audio bundled under the various
+"assets/" directories remain the property of their original creators and are
+included here for educational use under their respective licenses.
+
+
+For questions regarding licensing or permitted use, please contact the author.
