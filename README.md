@@ -1,7 +1,7 @@
-# Beginning Game Programming with Go and Ebitengine — Source Code
+# Beginning Game Programming with Go — Source Code
 
 This repository contains the complete source code for the book
-[**_Beginning Game Programming with Go and Ebitengine_**](https://leanpub.com/gameprogramminggolang).
+[**_Beginning Game Programming with Go_**](https://leanpub.com/gameprogramminggolang).
 
 The book teaches, step by step, how to program a 2D **"bullet-heaven"** game (the
 genre popularized by *Vampire Survivors*) using the **Go** language and the
