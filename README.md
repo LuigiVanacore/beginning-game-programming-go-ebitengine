@@ -34,8 +34,8 @@ No prior experience with Ebitengine is required.
 
 Main dependencies (managed via Go Modules, see the individual `go.mod` files):
 
-- `github.com/hajimehoshi/ebiten/v2` — the game framework
-- `golang.org/x/image` — fonts and graphics utilities (from the chapters with UI/text onward)
+- `github.com/hajimehoshi/ebiten/v2` the game framework
+- `golang.org/x/image` fonts and graphics utilities (from the chapters with UI/text onward)
 
 > **Note for Linux:** Ebitengine requires some system libraries (OpenGL, ALSA,
 > X11/Wayland). See the [official installation page](https://ebitengine.org/en/documents/install.html)
